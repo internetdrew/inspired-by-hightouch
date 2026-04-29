@@ -1,3 +1,5 @@
+import { Typewriter } from 'motion-plus/react';
+
 function App() {
   return (
     <div className='page-shell px-2'>
@@ -42,12 +44,16 @@ function App() {
         </div>
 
         {/* The AI Interface */}
-        <div className='bg-white absolute bottom-44 left-4 rounded-lg shadow max-w-64 md:bottom-12'>
+        <div className='bg-white absolute bottom-44 left-4 rounded-lg shadow w-64 md:bottom-12'>
           <p className='font-semibold text-xs p-3 border-b border-neutral-300'>
             Edit with agent
           </p>
-          <div className='border border-neutral-300 text-xs text-neutral-500 p-2 m-3 rounded-md flex items-center gap-4'>
-            <span>Change the headline to "25% Off Sitewide"</span>
+          <div className='border border-neutral-300 text-xs text-neutral-500 p-2 m-3 rounded-md flex items-center gap-4 h-12'>
+            <div className='flex-1 self-start'>
+              <Typewriter cursorStyle={cursor}>
+                Change the headline to "25% Off Sitewide"
+              </Typewriter>
+            </div>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               width='24'
@@ -69,5 +75,10 @@ function App() {
     </div>
   );
 }
+
+const cursor: React.CSSProperties = {
+  background: '#ff0088',
+  width: 1.5,
+};
 
 export default App;
