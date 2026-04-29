@@ -1,15 +1,43 @@
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useReducedMotion,
+} from 'motion/react';
 import { Typewriter } from 'motion-plus/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 function App() {
   const shouldReduceMotion = useReducedMotion();
+  const editPanelRef = useRef<HTMLElement | null>(null);
+  const reviewPanelRef = useRef<HTMLElement | null>(null);
+  const isEditPanelInView = useInView(editPanelRef, {
+    amount: 0.5,
+    once: true,
+  });
+  const isReviewPanelInView = useInView(reviewPanelRef, {
+    amount: 0.5,
+    once: true,
+  });
   const [isPromptReady, setIsPromptReady] = useState(false);
   const [headline, setHeadline] = useState<
     '25% Off Everything' | '25% Off Sitewide'
   >('25% Off Everything');
   const [isApplyingPrompt, setIsApplyingPrompt] = useState(false);
   const [headlineUpdated, setHeadlineUpdated] = useState(false);
+
+  const emailEntranceTransition = {
+    type: 'spring' as const,
+    duration: 0.92,
+    bounce: 0.05,
+  };
+
+  const agentEntranceTransition = {
+    type: 'spring' as const,
+    duration: 0.8,
+    bounce: 0.04,
+    delay: shouldReduceMotion ? 0 : 0.14,
+  };
 
   const handleApplyPrompt = () => {
     if (isApplyingPrompt || headline === '25% Off Sitewide') {
@@ -43,7 +71,10 @@ function App() {
             more, without making a single request from your design team.
           </p>
         </div>
-        <article className='hero-panel relative flex flex-col items-end justify-end rounded-2xl pr-6'>
+        <article
+          ref={editPanelRef}
+          className='hero-panel relative flex flex-col items-end justify-end rounded-2xl pr-6'
+        >
           <motion.div
             id='email'
             initial={
@@ -51,12 +82,12 @@ function App() {
                 ? false
                 : { y: 88, opacity: 0, scale: 0.985, rotate: -0.4 }
             }
-            animate={{ y: 0, opacity: 1, scale: 1, rotate: 0 }}
-            transition={{
-              type: 'spring',
-              duration: 0.72,
-              bounce: 0.12,
-            }}
+            animate={
+              shouldReduceMotion || isEditPanelInView
+                ? { y: 0, opacity: 1, scale: 1, rotate: 0 }
+                : undefined
+            }
+            transition={emailEntranceTransition}
             className='bg-white p-4 rounded-md w-4/6 space-y-2'
           >
             <div className='text-xs flex items-start gap-8 md:text-sm'>
@@ -119,13 +150,12 @@ function App() {
                 ? false
                 : { y: 44, opacity: 0, scale: 0.97, rotate: -0.3 }
             }
-            animate={{ y: 0, opacity: 1, scale: 1, rotate: 0 }}
-            transition={{
-              type: 'spring',
-              duration: 0.6,
-              bounce: 0.1,
-              delay: shouldReduceMotion ? 0 : 0.1,
-            }}
+            animate={
+              shouldReduceMotion || isEditPanelInView
+                ? { y: 0, opacity: 1, scale: 1, rotate: 0 }
+                : undefined
+            }
+            transition={agentEntranceTransition}
             className='bg-white absolute bottom-44 left-4 rounded-lg shadow w-64 md:bottom-12'
           >
             <p className='font-semibold text-xs p-3 border-b border-neutral-300'>
@@ -193,7 +223,10 @@ function App() {
             the final call.
           </p>
         </div>
-        <article className='hero-panel relative flex flex-col items-end justify-end rounded-2xl pr-6'>
+        <article
+          ref={reviewPanelRef}
+          className='hero-panel relative flex flex-col items-end justify-end rounded-2xl pr-6'
+        >
           <motion.div
             id='email'
             initial={
@@ -201,12 +234,12 @@ function App() {
                 ? false
                 : { y: 88, opacity: 0, scale: 0.985, rotate: -0.4 }
             }
-            animate={{ y: 0, opacity: 1, scale: 1, rotate: 0 }}
-            transition={{
-              type: 'spring',
-              duration: 0.72,
-              bounce: 0.12,
-            }}
+            animate={
+              shouldReduceMotion || isReviewPanelInView
+                ? { y: 0, opacity: 1, scale: 1, rotate: 0 }
+                : undefined
+            }
+            transition={emailEntranceTransition}
             className='bg-white p-4 rounded-md w-4/6 space-y-2'
           >
             <div className='text-xs flex items-start gap-8 md:text-sm'>
@@ -269,13 +302,12 @@ function App() {
                 ? false
                 : { y: 44, opacity: 0, scale: 0.97, rotate: -0.3 }
             }
-            animate={{ y: 0, opacity: 1, scale: 1, rotate: 0 }}
-            transition={{
-              type: 'spring',
-              duration: 0.6,
-              bounce: 0.1,
-              delay: shouldReduceMotion ? 0 : 0.1,
-            }}
+            animate={
+              shouldReduceMotion || isReviewPanelInView
+                ? { y: 0, opacity: 1, scale: 1, rotate: 0 }
+                : undefined
+            }
+            transition={agentEntranceTransition}
             className='bg-white absolute bottom-44 left-4 rounded-lg shadow w-64 md:bottom-12'
           >
             <p className='font-semibold text-xs p-3 border-b border-neutral-300'>
