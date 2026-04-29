@@ -1,6 +1,23 @@
+import { AnimatePresence, motion } from 'motion/react';
 import { Typewriter } from 'motion-plus/react';
+import { useState } from 'react';
 
 function App() {
+  const [isPromptReady, setIsPromptReady] = useState(false);
+  const [headline, setHeadline] = useState('25% Off Everything');
+  const [isApplyingPrompt, setIsApplyingPrompt] = useState(false);
+  const [headlineUpdated, setHeadlineUpdated] = useState(false);
+
+  const handleApplyPrompt = () => {
+    if (isApplyingPrompt || headline === '25% Off Sitewide') {
+      return;
+    }
+
+    setIsApplyingPrompt(true);
+    setHeadline('25% Off Sitewide');
+    setHeadlineUpdated(true);
+  };
+
   return (
     <div className='page-shell px-2'>
       <div className='w-full md:max-w-3/4 lg:max-w-1/2'>
@@ -40,9 +57,24 @@ function App() {
 
             <div>
               <div className='w-full bg-[#fcefe3] mt-8 grid place-items-center py-4'>
-                <p className='font-serif font-medium sm:text-lg md:text-xl'>
-                  25% Off Everything
-                </p>
+                <div className='relative flex min-h-[1.6em] items-center justify-center overflow-hidden'>
+                  <AnimatePresence
+                    mode='wait'
+                    initial={false}
+                    onExitComplete={() => setIsApplyingPrompt(false)}
+                  >
+                    <motion.p
+                      key={headline}
+                      className='font-serif font-medium sm:text-lg md:text-xl'
+                      initial={{ y: -14, opacity: 0, filter: 'blur(4px)' }}
+                      animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
+                      exit={{ y: 14, opacity: 0, filter: 'blur(4px)' }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    >
+                      {headline}
+                    </motion.p>
+                  </AnimatePresence>
+                </div>
                 <p className='text-xs font-medium sm:text-sm'>Limtied Time</p>
                 <button className='mt-4 bg-[#b2470b] font-medium px-2 py-1 text-xs text-white'>
                   Shop the sale
@@ -58,26 +90,51 @@ function App() {
             </p>
             <div className='border border-neutral-300 text-xs text-neutral-500 p-2 m-3 rounded-md flex items-center gap-4 h-12'>
               <div className='flex-1 self-start'>
-                <Typewriter cursorStyle={cursor}>
+                <Typewriter
+                  speed='fast'
+                  cursorStyle={cursor}
+                  onComplete={() => setIsPromptReady(true)}
+                >
                   Change the headline to "25% Off Sitewide"
                 </Typewriter>
               </div>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                width='24'
-                height='24'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-                stroke-width='2'
-                stroke-linecap='round'
-                stroke-linejoin='round'
-                className='size-4 fill-neutral-500 text-neutral-500 mr-2'
+              <button
+                type='button'
+                onClick={handleApplyPrompt}
+                disabled={!isPromptReady || isApplyingPrompt || headlineUpdated}
+                aria-label='Apply prompt to email headline'
+                className={`mr-2 inline-flex items-center justify-center rounded-md p-1.5 transition-all duration-200 ease-out ${
+                  isPromptReady
+                    ? 'translate-y-0 opacity-100 text-neutral-700 shadow-[0_0_0_1px_rgba(0,0,0,0.08)] hover:scale-105 hover:text-black'
+                    : 'pointer-events-none translate-y-1 opacity-0 text-neutral-400'
+                } ${headline === '25% Off Sitewide' ? 'bg-neutral-100' : 'bg-white animate-pulse'}`}
               >
-                <path d='M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z' />
-                <path d='M6 12h16' />
-              </svg>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  width='24'
+                  height='24'
+                  viewBox='0 0 24 24'
+                  fill='none'
+                  stroke='currentColor'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  className='size-4 fill-current'
+                >
+                  <path d='M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z' />
+                  <path d='M6 12h16' />
+                </svg>
+              </button>
             </div>
+            <p
+              className={`px-3 pb-3 text-[11px] font-medium text-neutral-500 transition-all duration-200 ease-out ${
+                isPromptReady
+                  ? 'translate-y-0 opacity-100'
+                  : 'pointer-events-none -translate-y-1 opacity-0'
+              }`}
+            >
+              Click the arrow to apply the prompt.
+            </p>
           </div>
         </article>
       </div>
