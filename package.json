@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.2.8",
     "@tailwindcss/vite": "^4.2.4",
     "motion": "^12.38.0",
     "motion-plus": "https://api.motion.dev/registry.tgz?package=motion-plus&version=2.8.0&token=747c2894bfe813449fb1dc94c7e2204157e5da106f231526a2f628302153d4bf",

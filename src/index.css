@@ -1,8 +1,9 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/inter/wght.css';
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Inter Variable', sans-serif;
 }
 
 .page-shell {
