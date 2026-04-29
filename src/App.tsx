@@ -1,8 +1,9 @@
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { Typewriter } from 'motion-plus/react';
 import { useState } from 'react';
 
 function App() {
+  const shouldReduceMotion = useReducedMotion();
   const [isPromptReady, setIsPromptReady] = useState(false);
   const [headline, setHeadline] = useState<
     '25% Off Everything' | '25% Off Sitewide'
@@ -22,6 +23,16 @@ function App() {
 
   return (
     <div className='page-shell px-2 py-12 space-y-24'>
+      <div className='mx-auto text-center mt-20 mb-28'>
+        <h1 className='text-2xl font-semibold mx-auto sm:max-w-1/2 md:text-3xl'>
+          Directed by marketers, <br />
+          delivered by agents
+        </h1>
+        <p className='font-light mt-4 sm:max-w-1/2 mx-auto'>
+          Whether you're working on a net-new idea or creating 100 variations of
+          one asset, Content Assembly makes it easy to scale your marketing.
+        </p>
+      </div>
       <div className='flex flex-col items-center gap-4 max-w-7xl sm:flex-row-reverse sm:gap-12'>
         <div>
           <p className='text-center font-semibold text-lg max-w-3/4 mx-auto sm:text-start sm:mx-0'>
@@ -33,7 +44,21 @@ function App() {
           </p>
         </div>
         <article className='hero-panel relative flex flex-col items-end justify-end rounded-2xl pr-6'>
-          <div id='email' className='bg-white p-4 rounded-md w-4/6 space-y-2'>
+          <motion.div
+            id='email'
+            initial={
+              shouldReduceMotion
+                ? false
+                : { y: 88, opacity: 0, scale: 0.985, rotate: -0.4 }
+            }
+            animate={{ y: 0, opacity: 1, scale: 1, rotate: 0 }}
+            transition={{
+              type: 'spring',
+              duration: 0.72,
+              bounce: 0.12,
+            }}
+            className='bg-white p-4 rounded-md w-4/6 space-y-2'
+          >
             <div className='text-xs flex items-start gap-8 md:text-sm'>
               <span className='text-neutral-600'>Subject</span>
               <span className='font-semibold'>25% off everything you love</span>
@@ -85,10 +110,24 @@ function App() {
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* The AI Interface */}
-          <div className='bg-white absolute bottom-44 left-4 rounded-lg shadow w-64 md:bottom-12'>
+          <motion.div
+            initial={
+              shouldReduceMotion
+                ? false
+                : { y: 44, opacity: 0, scale: 0.97, rotate: -0.3 }
+            }
+            animate={{ y: 0, opacity: 1, scale: 1, rotate: 0 }}
+            transition={{
+              type: 'spring',
+              duration: 0.6,
+              bounce: 0.1,
+              delay: shouldReduceMotion ? 0 : 0.1,
+            }}
+            className='bg-white absolute bottom-44 left-4 rounded-lg shadow w-64 md:bottom-12'
+          >
             <p className='font-semibold text-xs p-3 border-b border-neutral-300'>
               Edit with agent
             </p>
@@ -139,7 +178,7 @@ function App() {
             >
               Click the arrow to apply the prompt.
             </p>
-          </div>
+          </motion.div>
         </article>
       </div>
 
@@ -155,7 +194,21 @@ function App() {
           </p>
         </div>
         <article className='hero-panel relative flex flex-col items-end justify-end rounded-2xl pr-6'>
-          <div id='email' className='bg-white p-4 rounded-md w-4/6 space-y-2'>
+          <motion.div
+            id='email'
+            initial={
+              shouldReduceMotion
+                ? false
+                : { y: 88, opacity: 0, scale: 0.985, rotate: -0.4 }
+            }
+            animate={{ y: 0, opacity: 1, scale: 1, rotate: 0 }}
+            transition={{
+              type: 'spring',
+              duration: 0.72,
+              bounce: 0.12,
+            }}
+            className='bg-white p-4 rounded-md w-4/6 space-y-2'
+          >
             <div className='text-xs flex items-start gap-8 md:text-sm'>
               <span className='text-neutral-600'>Subject</span>
               <span className='font-semibold'>25% off everything you love</span>
@@ -207,10 +260,24 @@ function App() {
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* The AI Interface */}
-          <div className='bg-white absolute bottom-44 left-4 rounded-lg shadow w-64 md:bottom-12'>
+          <motion.div
+            initial={
+              shouldReduceMotion
+                ? false
+                : { y: 44, opacity: 0, scale: 0.97, rotate: -0.3 }
+            }
+            animate={{ y: 0, opacity: 1, scale: 1, rotate: 0 }}
+            transition={{
+              type: 'spring',
+              duration: 0.6,
+              bounce: 0.1,
+              delay: shouldReduceMotion ? 0 : 0.1,
+            }}
+            className='bg-white absolute bottom-44 left-4 rounded-lg shadow w-64 md:bottom-12'
+          >
             <p className='font-semibold text-xs p-3 border-b border-neutral-300'>
               Edit with agent
             </p>
@@ -261,7 +328,7 @@ function App() {
             >
               Click the arrow to apply the prompt.
             </p>
-          </div>
+          </motion.div>
         </article>
       </div>
     </div>
