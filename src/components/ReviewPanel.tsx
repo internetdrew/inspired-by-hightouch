@@ -33,9 +33,18 @@ const reviewLayoutSpring = {
 };
 
 const REVIEW_ROW_ENTER_TRANSITION = {
-  type: 'spring' as const,
-  stiffness: 320,
-  damping: 30,
+  duration: 0.24,
+  ease: [0.23, 1, 0.32, 1] as const,
+};
+
+const ISSUE_CARD_TRANSITION = {
+  duration: 0.24,
+  ease: [0.23, 1, 0.32, 1] as const,
+};
+
+const BADGE_SWAP_TRANSITION = {
+  duration: 0.18,
+  ease: [0.23, 1, 0.32, 1] as const,
 };
 
 const TIMING = {
@@ -274,50 +283,75 @@ const ReviewPanel = () => {
                       ? false
                       : {
                           opacity: 0,
-                          y: 10,
-                          scale: 0.985,
-                          filter: 'blur(4px)',
+                          y: 12,
+                          scale: 0.97,
                         }
                   }
                   animate={{
                     opacity: 1,
                     y: 0,
                     scale: 1,
-                    filter: 'blur(0px)',
                   }}
                   exit={{
                     opacity: 0,
                     y: -8,
-                    scale: 0.985,
-                    filter: 'blur(4px)',
+                    scale: 0.98,
                   }}
                   transition={{
-                    ...reviewPanelSpring,
-                    duration: 0.28,
+                    opacity: ISSUE_CARD_TRANSITION,
+                    y: ISSUE_CARD_TRANSITION,
+                    scale: ISSUE_CARD_TRANSITION,
                   }}
-                  className='rounded-md border border-red-500/20 bg-red-400/10 p-3 text-xs'
+                  className='relative overflow-hidden rounded-md border border-red-500/20 bg-red-400/10 p-3 pl-4 text-xs shadow-[0_10px_30px_rgba(239,68,68,0.08)]'
                 >
+                  <span
+                    aria-hidden='true'
+                    className='absolute inset-y-3 left-0 w-1 rounded-full bg-red-500'
+                  />
                   <div className='flex items-center justify-between'>
                     <p className='font-medium text-red-600'>Missing end date</p>
-                    <span className='rounded-full px-1.5 py-0.5 text-[10px] text-red-600 ring ring-red-500/20'>
+                    <span className='rounded-full bg-white/80 px-1.5 py-0.5 text-[10px] text-red-600 ring ring-red-500/15'>
                       Legal AI
                     </span>
                   </div>
 
-                  <p className='my-4 text-red-600'>
+                  {/* <p className='mt-2 text-[11px] font-medium uppercase tracking-[0.08em] text-red-500/80'>
+                    Review paused until resolved
+                  </p> */}
+
+                  <p className='my-3 text-red-700'>
                     The offer doesn't state when it ends, which can create
                     confusion and compliance risk.
                   </p>
 
                   <div className='flex items-center gap-2'>
-                    <button
+                    <motion.button
                       type='button'
                       onClick={handleFixIssue}
-                      className='cursor-pointer rounded-sm bg-white px-2 py-1 ring ring-neutral-200/50'
+                      initial={
+                        shouldReduceMotion
+                          ? false
+                          : { opacity: 0, y: 6, scale: 0.98 }
+                      }
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{
+                        ...ISSUE_CARD_TRANSITION,
+                        delay: shouldReduceMotion ? 0 : 0.08,
+                      }}
+                      whileTap={
+                        shouldReduceMotion ? undefined : { scale: 0.98 }
+                      }
+                      className='cursor-pointer rounded-sm bg-red-600 px-2.5 py-1.5 font-medium text-white shadow-sm transition-transform duration-150 ease-out hover:scale-[1.02] focus:outline-none active:scale-[0.97]'
                     >
-                      Fix
+                      Fix issue
+                    </motion.button>
+                    <button
+                      type='button'
+                      disabled
+                      className='text-neutral-500 opacity-60'
+                    >
+                      Ignore
                     </button>
-                    <button disabled>Ignore</button>
                   </div>
                 </motion.div>
               ) : visibleFollowUpRows.length > 0 ? (
@@ -338,20 +372,17 @@ const ReviewPanel = () => {
                                 opacity: 0,
                                 y: 8,
                                 scale: 0.985,
-                                filter: 'blur(4px)',
                               }
                         }
                         animate={{
                           opacity: 1,
                           y: 0,
                           scale: 1,
-                          filter: 'blur(0px)',
                         }}
                         exit={{
                           opacity: 0,
                           y: -6,
                           scale: 0.985,
-                          filter: 'blur(4px)',
                         }}
                         transition={REVIEW_ROW_ENTER_TRANSITION}
                       >
@@ -408,10 +439,7 @@ function ReviewStatusRow({
         )}
       </span>
       <span className='font-medium'>{label}</span>
-      <ReviewBadge
-        badgeState={badgeState}
-        isProcessing={isProcessing}
-      />
+      <ReviewBadge badgeState={badgeState} isProcessing={isProcessing} />
     </div>
   );
 }
@@ -450,21 +478,18 @@ function ReviewBadge({
                 y: -10,
                 opacity: 0,
                 scale: 0.75,
-                filter: 'blur(4px)',
               }}
               animate={{
                 y: 0,
                 opacity: 1,
                 scale: 1,
-                filter: 'blur(0px)',
               }}
               exit={{
                 y: 10,
                 opacity: 0,
                 scale: 0.75,
-                filter: 'blur(4px)',
               }}
-              transition={{ duration: 0.18, ease: 'easeInOut' }}
+              transition={BADGE_SWAP_TRANSITION}
               className='absolute inset-0 flex items-center justify-center'
             >
               {badgeState === 'approved' ? (
@@ -513,19 +538,16 @@ function ReviewBadge({
               initial={{
                 y: -10,
                 opacity: 0,
-                filter: 'blur(4px)',
               }}
               animate={{
                 y: 0,
                 opacity: 1,
-                filter: 'blur(0px)',
               }}
               exit={{
                 y: 10,
                 opacity: 0,
-                filter: 'blur(4px)',
               }}
-              transition={{ duration: 0.18, ease: 'easeInOut' }}
+              transition={BADGE_SWAP_TRANSITION}
               className='relative whitespace-nowrap'
             >
               {badgeState === 'approved' ? 'Approved' : 'Processing'}
