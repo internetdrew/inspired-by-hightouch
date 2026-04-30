@@ -13,25 +13,15 @@ This project takes those moments as a starting point and reimagines them as ligh
 
 ## Run Locally
 
-1. Clone the repo:
+1. Clone the repo and install dependencies:
 
 ```bash
 git clone https://github.com/internetdrew/inspired-by-hightouch.git
-```
-
-2. Got into the directory:
-
-```bash
 cd inspired-by-hightouch
-```
-
-3. Install dependencies:
-
-```bash
 npm install
 ```
 
-4. Start the dev server:
+2. Start the dev server:
 
 ```bash
 npm run dev
