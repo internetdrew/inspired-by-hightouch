@@ -44,6 +44,12 @@ const AgentEdit = () => {
     ease: EASE_OUT,
   };
 
+  const badgeState = headlineUpdated
+    ? 'applied'
+    : isPromptReady
+      ? 'ready'
+      : 'typing';
+
   const handleApplyPrompt = () => {
     if (isApplyingPrompt || headline === '25% Off Sitewide') {
       return;
@@ -129,9 +135,9 @@ const AgentEdit = () => {
                   {headlineUpdated ? 'Updated headline' : 'Editable headline'}
                 </span>
               </span>
-              <span className='hidden text-[10px] font-medium uppercase tracking-[0.08em] text-neutral-400 sm:inline'>
+              {/* <span className='hidden text-[10px] font-medium uppercase tracking-[0.08em] text-neutral-400 sm:inline'>
                 Hero module
-              </span>
+              </span> */}
             </div>
 
             <div className='relative flex min-h-[1.8em] items-center justify-center overflow-hidden text-center'>
@@ -179,24 +185,55 @@ const AgentEdit = () => {
       >
         <div className='flex items-center justify-between border-b border-slate-200/80 px-4 py-3'>
           <div>
-            <p className='hidden text-[10px] font-medium uppercase tracking-[0.1em] text-sky-600 sm:block'>
+            <p className='hidden text-[10px] font-medium uppercase tracking-widest text-sky-600 sm:block'>
               Agent action
             </p>
             <p className='mt-1 text-xs font-semibold text-slate-900'>
               Edit with agent
             </p>
           </div>
-          <span
-            className={`rounded-full px-2 py-1 text-[10px] font-medium ${
-              headlineUpdated
-                ? 'bg-emerald-100 text-emerald-700'
-                : isPromptReady
-                  ? 'bg-sky-100 text-sky-700'
-                  : 'bg-neutral-100 text-neutral-500'
-            }`}
+          <motion.span
+            layout
+            animate={
+              badgeState === 'applied'
+                ? {
+                    backgroundColor: 'rgba(220, 252, 231, 1)',
+                    color: 'rgba(4, 120, 87, 1)',
+                  }
+                : badgeState === 'ready'
+                  ? {
+                      backgroundColor: 'rgba(224, 242, 254, 1)',
+                      color: 'rgba(3, 105, 161, 1)',
+                    }
+                  : {
+                      backgroundColor: 'rgba(245, 245, 245, 1)',
+                      color: 'rgba(115, 115, 115, 1)',
+                    }
+            }
+            transition={{
+              layout: { duration: 0.18 },
+              duration: 0.18,
+              ease: EASE_OUT,
+            }}
+            className='inline-flex overflow-hidden rounded-full px-2 py-1 text-[10px] font-medium'
           >
-            {headlineUpdated ? 'Applied' : isPromptReady ? 'Ready' : 'Typing'}
-          </span>
+            <AnimatePresence mode='popLayout' initial={false}>
+              <motion.span
+                key={badgeState}
+                initial={shouldReduceMotion ? false : { opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 4 }}
+                transition={{ duration: 0.16, ease: EASE_OUT }}
+                className='relative whitespace-nowrap'
+              >
+                {badgeState === 'applied'
+                  ? 'Applied'
+                  : badgeState === 'ready'
+                    ? 'Ready'
+                    : 'Typing'}
+              </motion.span>
+            </AnimatePresence>
+          </motion.span>
         </div>
         <div className='m-3 rounded-lg border border-slate-200/90 bg-slate-50/85 p-3 text-xs text-slate-600'>
           <p className='mb-2 hidden text-[10px] font-medium uppercase tracking-[0.08em] text-slate-400 sm:block'>
