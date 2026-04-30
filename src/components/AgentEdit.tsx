@@ -85,9 +85,9 @@ const AgentEdit = () => {
             <span className='text-neutral-600'>Subject</span>
             <span className='font-semibold'>25% off everything you love</span>
           </div>
-          <span className='hidden rounded-full bg-neutral-100 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.08em] text-neutral-500 sm:inline-flex'>
+          {/* <span className='hidden rounded-full bg-neutral-100 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.08em] text-neutral-500 sm:inline-flex'>
             Campaign draft
-          </span>
+          </span> */}
         </div>
         <div className='flex items-start gap-4 pt-1 text-xs text-neutral-600 md:text-sm'>
           <span>Preheader</span>

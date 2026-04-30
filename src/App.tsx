@@ -14,12 +14,13 @@ function App() {
           one asset, Content Assembly makes it easy to scale your marketing.
         </p>
       </div>
-      <div className='flex flex-col items-center gap-4 max-w-7xl sm:flex-row-reverse sm:gap-12'>
-        <div className='px-4 sm:px-0'>
-          <p className='text-center font-semibold text-lg sm:max-w-3/4 mx-auto sm:text-start sm:mx-0'>
+
+      <div className='flex flex-col items-center gap-4 max-w-7xl lg:flex-row-reverse lg:gap-12'>
+        <div className='px-4 lg:px-0'>
+          <p className='text-center font-semibold text-lg lg:max-w-3/4 mx-auto lg:text-start lg:mx-0'>
             Edit outputs using AI prompts and manual tools
           </p>
-          <p className='text-center text-sm font-light mt-2 mx-auto sm:max-w-3/4 sm:text-start sm:mx-0'>
+          <p className='text-center text-sm font-light mt-2 mx-auto lg:max-w-3/4 lg:text-start lg:mx-0'>
             Change image backgrounds, edit burned-in text, update copy, and
             more, without making a single request from your design team.
           </p>
@@ -27,12 +28,12 @@ function App() {
         <AgentEdit />
       </div>
 
-      <div className='flex flex-col max-w-7xl items-center gap-4 sm:flex-row sm:gap-12'>
-        <div className='px-4 sm:px-0'>
-          <p className='text-center font-semibold text-lg sm:max-w-3/4 mx-auto sm:text-start sm:mx-0'>
+      <div className='flex flex-col max-w-7xl items-center gap-4 lg:flex-row lg:gap-12'>
+        <div className='px-4 md:px-6 lg:px-0'>
+          <p className='text-center font-semibold text-lg lg:max-w-3/4 mx-auto lg:text-start lg:mx-0'>
             Kickstart the review process with custom legal and brand agents
           </p>
-          <p className='text-center text-sm font-light mt-2 mx-auto sm:max-w-3/4 sm:text-start sm:mx-0'>
+          <p className='text-center text-sm font-light mt-2 mx-auto lg:max-w-3/4 lg:text-start lg:mx-0'>
             Ensure content compliance with legal and brand agents, trained on
             your business guidelines. When ready, send directly to your team for
             the final call.
