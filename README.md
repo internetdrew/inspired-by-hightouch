@@ -1,4 +1,4 @@
-# Interactivity Inspired by Hightouch's Content Assembly
+# Interactive Product Storytelling Inspired by Hightouch
 
 This project is a personal interactive experiment inspired by Hightouch's product storytelling and website presentation.
 
