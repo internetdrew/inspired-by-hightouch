@@ -1,53 +1,15 @@
-import {
-  AnimatePresence,
-  motion,
-  useInView,
-  useReducedMotion,
-} from 'motion/react';
-import { Typewriter } from 'motion-plus/react';
-import { useRef, useState } from 'react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
+import { useRef } from 'react';
+import AgentEdit from './components/AgentEdit';
 
 function App() {
   const shouldReduceMotion = useReducedMotion();
-  const editPanelRef = useRef<HTMLElement | null>(null);
   const reviewPanelRef = useRef<HTMLElement | null>(null);
-  const isEditPanelInView = useInView(editPanelRef, {
-    amount: 0.5,
-    once: true,
-  });
+
   const isReviewPanelInView = useInView(reviewPanelRef, {
     amount: 0.5,
     once: true,
   });
-  const [isPromptReady, setIsPromptReady] = useState(false);
-  const [headline, setHeadline] = useState<
-    '25% Off Everything' | '25% Off Sitewide'
-  >('25% Off Everything');
-  const [isApplyingPrompt, setIsApplyingPrompt] = useState(false);
-  const [headlineUpdated, setHeadlineUpdated] = useState(false);
-
-  const emailEntranceTransition = {
-    type: 'spring' as const,
-    duration: 0.92,
-    bounce: 0.05,
-  };
-
-  const agentEntranceTransition = {
-    type: 'spring' as const,
-    duration: 0.8,
-    bounce: 0.04,
-    delay: shouldReduceMotion ? 0 : 0.14,
-  };
-
-  const handleApplyPrompt = () => {
-    if (isApplyingPrompt || headline === '25% Off Sitewide') {
-      return;
-    }
-
-    setIsApplyingPrompt(true);
-    setHeadline('25% Off Sitewide');
-    setHeadlineUpdated(true);
-  };
 
   return (
     <div className='page-shell px-2 py-12 space-y-24'>
@@ -66,150 +28,12 @@ function App() {
           <p className='text-center font-semibold text-lg max-w-3/4 mx-auto sm:text-start sm:mx-0'>
             Edit outputs using AI prompts and manual tools
           </p>
-          <p className='text-center font-light mt-2 mx-auto max-w-3/4 sm:text-start sm:mx-0'>
+          <p className='text-center text-sm font-light mt-2 mx-auto max-w-3/4 sm:text-start sm:mx-0'>
             Change image backgrounds, edit burned-in text, update copy, and
             more, without making a single request from your design team.
           </p>
         </div>
-        <article
-          ref={editPanelRef}
-          className='hero-panel relative flex flex-col items-end justify-end rounded-2xl pr-6'
-        >
-          <motion.div
-            id='email'
-            initial={
-              shouldReduceMotion
-                ? false
-                : { y: 88, opacity: 0, scale: 0.985, rotate: -0.4 }
-            }
-            animate={
-              shouldReduceMotion || isEditPanelInView
-                ? { y: 0, opacity: 1, scale: 1, rotate: 0 }
-                : undefined
-            }
-            transition={emailEntranceTransition}
-            className='bg-white p-4 rounded-md w-4/6 space-y-2'
-          >
-            <div className='text-xs flex items-start gap-8 md:text-sm'>
-              <span className='text-neutral-600'>Subject</span>
-              <span className='font-semibold'>25% off everything you love</span>
-            </div>
-            <div className='text-xs flex items-start gap-4 text-neutral-600 md:text-sm'>
-              <span>Preheader</span>
-              <span>Now's the time to refresh your rotation</span>
-            </div>
-
-            <div className='text-center flex flex-col mt-8 text-base sm:text-lg md:text-xl'>
-              <p className='font-serif'>Acme Goods</p>
-              <ul className='flex items-center mx-auto text-[7px] mt-1 flex-wrap wrap-break-word sm:text-[12px] md:text-[14px]'>
-                <li className='border-r border-neutral-400 px-2 leading-none'>
-                  Clothing
-                </li>
-                <li className='border-r border-neutral-400 px-2 leading-none'>
-                  Shoes
-                </li>
-                <li className='border-r border-neutral-400 px-2 leading-none'>
-                  Accessories
-                </li>
-                <li className='px-3 leading-none'>Home</li>
-              </ul>
-            </div>
-
-            <div>
-              <div className='w-full bg-[#fcefe3] mt-8 grid place-items-center py-4'>
-                <div className='relative flex min-h-[1.6em] items-center justify-center overflow-hidden'>
-                  <AnimatePresence
-                    mode='wait'
-                    initial={false}
-                    onExitComplete={() => setIsApplyingPrompt(false)}
-                  >
-                    <motion.p
-                      key={headline}
-                      className='font-serif font-medium sm:text-lg md:text-xl'
-                      initial={{ y: -14, opacity: 0, filter: 'blur(4px)' }}
-                      animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
-                      exit={{ y: 14, opacity: 0, filter: 'blur(4px)' }}
-                      transition={{ duration: 0.2, ease: 'easeInOut' }}
-                    >
-                      {headline}
-                    </motion.p>
-                  </AnimatePresence>
-                </div>
-                <p className='text-xs font-medium sm:text-sm'>Limtied Time</p>
-                <button className='mt-4 bg-[#b2470b] font-medium px-2 py-1 text-xs text-white'>
-                  Shop the sale
-                </button>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* The AI Interface */}
-          <motion.div
-            initial={
-              shouldReduceMotion
-                ? false
-                : { y: 44, opacity: 0, scale: 0.97, rotate: -0.3 }
-            }
-            animate={
-              shouldReduceMotion || isEditPanelInView
-                ? { y: 0, opacity: 1, scale: 1, rotate: 0 }
-                : undefined
-            }
-            transition={agentEntranceTransition}
-            className='bg-white absolute bottom-44 left-4 rounded-lg shadow w-64 md:bottom-12'
-          >
-            <p className='font-semibold text-xs p-3 border-b border-neutral-300'>
-              Edit with agent
-            </p>
-            <div className='border border-neutral-300 text-xs text-neutral-500 p-2 m-3 rounded-md flex items-center gap-4 h-12'>
-              <div className='flex-1 self-start'>
-                <Typewriter
-                  speed='fast'
-                  cursorStyle={cursor}
-                  onComplete={() => setIsPromptReady(true)}
-                >
-                  Change the headline to "25% Off Sitewide"
-                </Typewriter>
-              </div>
-              <button
-                type='button'
-                onClick={handleApplyPrompt}
-                disabled={!isPromptReady || isApplyingPrompt || headlineUpdated}
-                aria-label='Apply prompt to email headline'
-                className={`mr-2 inline-flex items-center justify-center rounded-md p-1.5 transition-all duration-200 ease-out shadow-[0_0_0_1px_rgba(0,0,0,0.08)] ${
-                  isPromptReady
-                    ? 'translate-y-0 opacity-100 text-neutral-700  hover:scale-105 hover:text-black'
-                    : 'pointer-events-none opacity-0 text-neutral-400'
-                } ${headline === '25% Off Sitewide' ? 'bg-neutral-100' : 'bg-white animate-pulse'}`}
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  width='24'
-                  height='24'
-                  viewBox='0 0 24 24'
-                  fill='none'
-                  stroke='currentColor'
-                  strokeWidth='2'
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  className='size-4 fill-current'
-                >
-                  <path d='M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z' />
-                  <path d='M6 12h16' />
-                </svg>
-              </button>
-            </div>
-            <p
-              className={`px-3 pb-3 text-[11px] font-medium text-neutral-500 transition-all duration-200 ease-out ${
-                isPromptReady
-                  ? 'translate-y-0 opacity-100'
-                  : 'pointer-events-none -translate-y-1 opacity-0'
-              }`}
-            >
-              Click the arrow to apply the prompt.
-            </p>
-          </motion.div>
-        </article>
+        <AgentEdit />
       </div>
 
       <div className='flex flex-col max-w-7xl items-center gap-4 sm:flex-row sm:gap-12'>
@@ -217,85 +41,17 @@ function App() {
           <p className='text-center font-semibold text-lg max-w-3/4 mx-auto sm:text-start sm:mx-0'>
             Kickstart the review process with custom legal and brand agents
           </p>
-          <p className='text-center font-light mt-2 mx-auto max-w-3/4 sm:text-start sm:mx-0'>
+          <p className='text-center text-sm font-light mt-2 mx-auto max-w-3/4 sm:text-start sm:mx-0'>
             Ensure content compliance with legal and brand agents, trained on
             your business guidelines. When ready, send directly to your team for
             the final call.
           </p>
         </div>
+
         <article
           ref={reviewPanelRef}
-          className='hero-panel relative flex flex-col items-end justify-end rounded-2xl pr-6'
+          className='hero-panel relative rounded-2xl grid place-items-center px-4'
         >
-          <motion.div
-            id='email'
-            initial={
-              shouldReduceMotion
-                ? false
-                : { y: 88, opacity: 0, scale: 0.985, rotate: -0.4 }
-            }
-            animate={
-              shouldReduceMotion || isReviewPanelInView
-                ? { y: 0, opacity: 1, scale: 1, rotate: 0 }
-                : undefined
-            }
-            transition={emailEntranceTransition}
-            className='bg-white p-4 rounded-md w-4/6 space-y-2'
-          >
-            <div className='text-xs flex items-start gap-8 md:text-sm'>
-              <span className='text-neutral-600'>Subject</span>
-              <span className='font-semibold'>25% off everything you love</span>
-            </div>
-            <div className='text-xs flex items-start gap-4 text-neutral-600 md:text-sm'>
-              <span>Preheader</span>
-              <span>Now's the time to refresh your rotation</span>
-            </div>
-
-            <div className='text-center flex flex-col mt-8 text-base sm:text-lg md:text-xl'>
-              <p className='font-serif'>Acme Goods</p>
-              <ul className='flex items-center mx-auto text-[7px] mt-1 flex-wrap wrap-break-word sm:text-[12px] md:text-[14px]'>
-                <li className='border-r border-neutral-400 px-2 leading-none'>
-                  Clothing
-                </li>
-                <li className='border-r border-neutral-400 px-2 leading-none'>
-                  Shoes
-                </li>
-                <li className='border-r border-neutral-400 px-2 leading-none'>
-                  Accessories
-                </li>
-                <li className='px-3 leading-none'>Home</li>
-              </ul>
-            </div>
-
-            <div>
-              <div className='w-full bg-[#fcefe3] mt-8 grid place-items-center py-4'>
-                <div className='relative flex min-h-[1.6em] items-center justify-center overflow-hidden'>
-                  <AnimatePresence
-                    mode='wait'
-                    initial={false}
-                    onExitComplete={() => setIsApplyingPrompt(false)}
-                  >
-                    <motion.p
-                      key={headline}
-                      className='font-serif font-medium sm:text-lg md:text-xl'
-                      initial={{ y: -14, opacity: 0, filter: 'blur(4px)' }}
-                      animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
-                      exit={{ y: 14, opacity: 0, filter: 'blur(4px)' }}
-                      transition={{ duration: 0.2, ease: 'easeInOut' }}
-                    >
-                      {headline}
-                    </motion.p>
-                  </AnimatePresence>
-                </div>
-                <p className='text-xs font-medium sm:text-sm'>Limtied Time</p>
-                <button className='mt-4 bg-[#b2470b] font-medium px-2 py-1 text-xs text-white'>
-                  Shop the sale
-                </button>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* The AI Interface */}
           <motion.div
             initial={
               shouldReduceMotion
@@ -307,69 +63,75 @@ function App() {
                 ? { y: 0, opacity: 1, scale: 1, rotate: 0 }
                 : undefined
             }
-            transition={agentEntranceTransition}
-            className='bg-white absolute bottom-44 left-4 rounded-lg shadow w-64 md:bottom-12'
+            transition={{
+              type: 'spring',
+              duration: 0.8,
+              bounce: 0.04,
+              delay: shouldReduceMotion ? 0 : 0.14,
+            }}
+            className='bg-white w-full mx-auto rounded-lg shadow sm:w-3/4'
           >
-            <p className='font-semibold text-xs p-3 border-b border-neutral-300'>
-              Edit with agent
+            <p className='font-semibold text-xs p-3 border-b border-neutral-300/20'>
+              Review
             </p>
-            <div className='border border-neutral-300 text-xs text-neutral-500 p-2 m-3 rounded-md flex items-center gap-4 h-12'>
-              <div className='flex-1 self-start'>
-                <Typewriter
-                  speed='fast'
-                  cursorStyle={cursor}
-                  onComplete={() => setIsPromptReady(true)}
-                >
-                  Change the headline to "25% Off Sitewide"
-                </Typewriter>
+            <div className='p-6'>
+              <div className='flex items-center gap-2 text-xs'>
+                <span className='inline-flex size-6 items-center justify-center bg-orange-200/30 rounded-full ring ring-orange-300/40'>
+                  🤖
+                </span>
+                <span className='font-medium'>Legal pre-review agents</span>
+                <span className='inline-flex items-center gap-0.5 bg-neutral-100 ring ring-neutral-200 px-1.5 py-0.5 rounded-full'>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    width='24'
+                    height='24'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    stroke='currentColor'
+                    strokeWidth='2'
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    className='size-3 text-neutral-400'
+                  >
+                    <path d='M10.1 2.18a9.93 9.93 0 0 1 3.8 0' />
+                    <path d='M17.6 3.71a9.95 9.95 0 0 1 2.69 2.7' />
+                    <path d='M21.82 10.1a9.93 9.93 0 0 1 0 3.8' />
+                    <path d='M20.29 17.6a9.95 9.95 0 0 1-2.7 2.69' />
+                    <path d='M13.9 21.82a9.94 9.94 0 0 1-3.8 0' />
+                    <path d='M6.4 20.29a9.95 9.95 0 0 1-2.69-2.7' />
+                    <path d='M2.18 13.9a9.93 9.93 0 0 1 0-3.8' />
+                    <path d='M3.71 6.4a9.95 9.95 0 0 1 2.7-2.69' />
+                    <circle cx='12' cy='12' r='1' />
+                  </svg>
+                  Processing
+                </span>
               </div>
-              <button
-                type='button'
-                onClick={handleApplyPrompt}
-                disabled={!isPromptReady || isApplyingPrompt || headlineUpdated}
-                aria-label='Apply prompt to email headline'
-                className={`mr-2 inline-flex items-center justify-center rounded-md p-1.5 transition-all duration-200 ease-out shadow-[0_0_0_1px_rgba(0,0,0,0.08)] ${
-                  isPromptReady
-                    ? 'translate-y-0 opacity-100 text-neutral-700  hover:scale-105 hover:text-black'
-                    : 'pointer-events-none opacity-0 text-neutral-400'
-                } ${headline === '25% Off Sitewide' ? 'bg-neutral-100' : 'bg-white animate-pulse'}`}
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  width='24'
-                  height='24'
-                  viewBox='0 0 24 24'
-                  fill='none'
-                  stroke='currentColor'
-                  strokeWidth='2'
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  className='size-4 fill-current'
-                >
-                  <path d='M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z' />
-                  <path d='M6 12h16' />
-                </svg>
-              </button>
+              <div className='mt-4 rounded-md p-3 text-xs border border-red-500/20 bg-red-400/10 mx-2'>
+                <div className='flex items-center justify-between'>
+                  <p className='font-medium text-red-600'>Missing end date</p>
+                  <span className='ring ring-red-500/20 text-[10px] text-red-600 rounded-full px-1.5 py-0.5'>
+                    Legal AI
+                  </span>
+                </div>
+
+                <p className='mt-4 text-red-600'>
+                  The offer doesn't state when it ends, which can create
+                  confusion and compliance risk.
+                </p>
+
+                <div className='flex items-center gap-1 mt-2'>
+                  <button className='cursor-pointer bg-white ring ring-neutral-200/50 px-2 py-1 rounded-sm'>
+                    Fix
+                  </button>
+                  <button disabled>Ignore</button>
+                </div>
+              </div>
             </div>
-            <p
-              className={`px-3 pb-3 text-[11px] font-medium text-neutral-500 transition-all duration-200 ease-out ${
-                isPromptReady
-                  ? 'translate-y-0 opacity-100'
-                  : 'pointer-events-none -translate-y-1 opacity-0'
-              }`}
-            >
-              Click the arrow to apply the prompt.
-            </p>
           </motion.div>
         </article>
       </div>
     </div>
   );
 }
-
-const cursor: React.CSSProperties = {
-  background: '#ff0088',
-  width: 1.5,
-};
 
 export default App;
