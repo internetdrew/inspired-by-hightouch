@@ -1,15 +1,37 @@
-import { motion, useInView, useReducedMotion } from 'motion/react';
-import { useRef } from 'react';
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useReducedMotion,
+} from 'motion/react';
+import { useRef, useState } from 'react';
 import AgentEdit from './components/AgentEdit';
+
+const reviewPanelSpring = {
+  type: 'spring' as const,
+  duration: 0.8,
+  bounce: 0.04,
+};
+
+const reviewLayoutSpring = {
+  type: 'spring' as const,
+  stiffness: 340,
+  damping: 32,
+};
 
 function App() {
   const shouldReduceMotion = useReducedMotion();
   const reviewPanelRef = useRef<HTMLElement | null>(null);
+  const [hasCompletedReviewScan, setHasCompletedReviewScan] = useState(false);
 
   const isReviewPanelInView = useInView(reviewPanelRef, {
     amount: 0.5,
     once: true,
   });
+  const isReviewProcessing =
+    isReviewPanelInView && !shouldReduceMotion && !hasCompletedReviewScan;
+  const showMissingEndDate =
+    (isReviewPanelInView && shouldReduceMotion) || hasCompletedReviewScan;
 
   return (
     <div className='page-shell px-2 py-12 space-y-24'>
@@ -53,6 +75,7 @@ function App() {
           className='hero-panel relative rounded-2xl grid place-items-center px-4'
         >
           <motion.div
+            layout
             initial={
               shouldReduceMotion
                 ? false
@@ -64,24 +87,23 @@ function App() {
                 : undefined
             }
             transition={{
-              type: 'spring',
-              duration: 0.8,
-              bounce: 0.04,
+              ...reviewPanelSpring,
               delay: shouldReduceMotion ? 0 : 0.14,
+              layout: reviewLayoutSpring,
             }}
             className='bg-white w-full mx-auto rounded-lg shadow sm:w-3/4'
           >
             <p className='font-semibold text-xs p-3 border-b border-neutral-300/20'>
               Review
             </p>
-            <div className='p-6'>
+            <motion.div layout className='p-6'>
               <div className='flex items-center gap-2 text-xs'>
                 <span className='inline-flex size-6 items-center justify-center bg-orange-200/30 rounded-full ring ring-orange-300/40'>
                   🤖
                 </span>
                 <span className='font-medium'>Legal pre-review agents</span>
                 <span className='inline-flex items-center gap-0.5 bg-neutral-100 ring ring-neutral-200 px-1.5 py-0.5 rounded-full'>
-                  <svg
+                  <motion.svg
                     xmlns='http://www.w3.org/2000/svg'
                     width='24'
                     height='24'
@@ -92,6 +114,23 @@ function App() {
                     strokeLinecap='round'
                     strokeLinejoin='round'
                     className='size-3 text-neutral-400'
+                    animate={
+                      isReviewProcessing ? { rotate: 360 } : { rotate: 0 }
+                    }
+                    transition={
+                      isReviewProcessing
+                        ? {
+                            duration: 1,
+                            ease: 'linear',
+                            repeat: 1,
+                          }
+                        : { duration: 0.2, ease: 'easeOut' }
+                    }
+                    onAnimationComplete={() => {
+                      if (isReviewProcessing) {
+                        setHasCompletedReviewScan(true);
+                      }
+                    }}
                   >
                     <path d='M10.1 2.18a9.93 9.93 0 0 1 3.8 0' />
                     <path d='M17.6 3.71a9.95 9.95 0 0 1 2.69 2.7' />
@@ -102,31 +141,69 @@ function App() {
                     <path d='M2.18 13.9a9.93 9.93 0 0 1 0-3.8' />
                     <path d='M3.71 6.4a9.95 9.95 0 0 1 2.7-2.69' />
                     <circle cx='12' cy='12' r='1' />
-                  </svg>
+                  </motion.svg>
                   Processing
                 </span>
               </div>
-              <div className='mt-4 rounded-md p-3 text-xs border border-red-500/20 bg-red-400/10 mx-2'>
-                <div className='flex items-center justify-between'>
-                  <p className='font-medium text-red-600'>Missing end date</p>
-                  <span className='ring ring-red-500/20 text-[10px] text-red-600 rounded-full px-1.5 py-0.5'>
-                    Legal AI
-                  </span>
-                </div>
+              <AnimatePresence initial={false}>
+                {showMissingEndDate ? (
+                  <motion.div
+                    key='missing-end-date'
+                    layout
+                    initial={
+                      shouldReduceMotion
+                        ? false
+                        : { height: 0, opacity: 0, marginTop: 0 }
+                    }
+                    animate={{ height: 'auto', opacity: 1, marginTop: 16 }}
+                    exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                    transition={{
+                      height: reviewLayoutSpring,
+                      opacity: { duration: 0.2, ease: 'easeOut' },
+                      marginTop: reviewLayoutSpring,
+                      layout: reviewLayoutSpring,
+                    }}
+                    className='overflow-hidden'
+                  >
+                    <motion.div
+                      layout
+                      initial={
+                        shouldReduceMotion
+                          ? false
+                          : { y: 10, scale: 0.985, filter: 'blur(4px)' }
+                      }
+                      animate={{ y: 0, scale: 1, filter: 'blur(0px)' }}
+                      transition={{
+                        ...reviewPanelSpring,
+                        duration: 0.28,
+                      }}
+                      className='rounded-md p-3 text-xs border border-red-500/20 bg-red-400/10 mx-2'
+                    >
+                      <div className='flex items-center justify-between'>
+                        <p className='font-medium text-red-600'>
+                          Missing end date
+                        </p>
+                        <span className='ring ring-red-500/20 text-[10px] text-red-600 rounded-full px-1.5 py-0.5'>
+                          Legal AI
+                        </span>
+                      </div>
 
-                <p className='mt-4 text-red-600'>
-                  The offer doesn't state when it ends, which can create
-                  confusion and compliance risk.
-                </p>
+                      <p className='my-4 text-red-600'>
+                        The offer doesn't state when it ends, which can create
+                        confusion and compliance risk.
+                      </p>
 
-                <div className='flex items-center gap-1 mt-2'>
-                  <button className='cursor-pointer bg-white ring ring-neutral-200/50 px-2 py-1 rounded-sm'>
-                    Fix
-                  </button>
-                  <button disabled>Ignore</button>
-                </div>
-              </div>
-            </div>
+                      <div className='flex items-center gap-2'>
+                        <button className='cursor-pointer bg-white ring ring-neutral-200/50 px-2 py-1 rounded-sm'>
+                          Fix
+                        </button>
+                        <button disabled>Ignore</button>
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
+            </motion.div>
           </motion.div>
         </article>
       </div>
