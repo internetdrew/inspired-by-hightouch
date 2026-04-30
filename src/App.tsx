@@ -16,7 +16,7 @@ function App() {
         </a>{' '}
         interactive experience
       </p>
-      <div className='mx-auto text-center mt-20 mb-28'>
+      <div className='mx-auto text-center mt-16 mb-28'>
         <h1 className='text-2xl font-semibold mx-auto sm:max-w-1/2 md:text-3xl'>
           Directed by marketers, <br />
           delivered by agents
