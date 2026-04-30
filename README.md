@@ -13,6 +13,8 @@ This project takes those moments as a starting point and reimagines them as ligh
 
 ## Run Locally
 
+- `git clone https://github.com/internetdrew/inspired-by-hightouch.git`
+- `cd inspired-by-hightouch`
 - `npm install`
 - `npm run dev`
 
