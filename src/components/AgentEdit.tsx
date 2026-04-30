@@ -7,6 +7,8 @@ import {
 import { Typewriter } from 'motion-plus/react';
 import { useRef, useState } from 'react';
 
+const EASE_OUT = [0.23, 1, 0.32, 1] as const;
+
 const AgentEdit = () => {
   const shouldReduceMotion = useReducedMotion();
   const editPanelRef = useRef<HTMLElement | null>(null);
@@ -21,6 +23,8 @@ const AgentEdit = () => {
   >('25% Off Everything');
   const [isApplyingPrompt, setIsApplyingPrompt] = useState(false);
   const [headlineUpdated, setHeadlineUpdated] = useState(false);
+  const isPromptActionReady =
+    isPromptReady && !isApplyingPrompt && !headlineUpdated;
 
   const emailEntranceTransition = {
     type: 'spring' as const,
@@ -34,6 +38,12 @@ const AgentEdit = () => {
     bounce: 0.04,
     delay: shouldReduceMotion ? 0 : 0.14,
   };
+
+  const headlineSwapTransition = {
+    duration: 0.22,
+    ease: EASE_OUT,
+  };
+
   const handleApplyPrompt = () => {
     if (isApplyingPrompt || headline === '25% Off Sitewide') {
       return;
@@ -62,27 +72,32 @@ const AgentEdit = () => {
             : undefined
         }
         transition={emailEntranceTransition}
-        className='bg-white p-4 rounded-md w-4/6 space-y-2'
+        className='relative w-4/6 space-y-2 rounded-md bg-white p-4 shadow-[0_18px_45px_rgba(80,98,132,0.14)]'
       >
-        <div className='text-xs flex items-start gap-8 md:text-sm'>
-          <span className='text-neutral-600'>Subject</span>
-          <span className='font-semibold'>25% off everything you love</span>
+        <div className='flex items-center justify-between border-b border-neutral-200/70 pb-3'>
+          <div className='flex items-start gap-8 text-xs md:text-sm'>
+            <span className='text-neutral-600'>Subject</span>
+            <span className='font-semibold'>25% off everything you love</span>
+          </div>
+          <span className='hidden rounded-full bg-neutral-100 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.08em] text-neutral-500 sm:inline-flex'>
+            Campaign draft
+          </span>
         </div>
-        <div className='text-xs flex items-start gap-4 text-neutral-600 md:text-sm'>
+        <div className='flex items-start gap-4 pt-1 text-xs text-neutral-600 md:text-sm'>
           <span>Preheader</span>
-          <span>Now's the time to refresh your rotation</span>
+          <span>Now&apos;s the time to refresh your rotation</span>
         </div>
 
-        <div className='text-center flex flex-col mt-8 text-base sm:text-lg md:text-xl'>
+        <div className='mt-8 flex flex-col text-center text-base sm:text-lg md:text-xl'>
           <p className='font-serif'>Acme Goods</p>
-          <ul className='flex items-center mx-auto text-[7px] mt-1 flex-wrap wrap-break-word sm:text-[12px] md:text-[14px]'>
-            <li className='border-r border-neutral-400 px-2 leading-none'>
+          <ul className='mx-auto mt-2 flex flex-wrap items-center text-[9px] text-neutral-500 sm:text-[11px] md:text-[12px]'>
+            <li className='border-r border-neutral-300 px-2 leading-none'>
               Clothing
             </li>
-            <li className='border-r border-neutral-400 px-2 leading-none'>
+            <li className='border-r border-neutral-300 px-2 leading-none'>
               Shoes
             </li>
-            <li className='border-r border-neutral-400 px-2 leading-none'>
+            <li className='border-r border-neutral-300 px-2 leading-none'>
               Accessories
             </li>
             <li className='px-3 leading-none'>Home</li>
@@ -90,8 +105,36 @@ const AgentEdit = () => {
         </div>
 
         <div>
-          <div className='w-full bg-[#fcefe3] mt-8 grid place-items-center py-4'>
-            <div className='relative flex min-h-[1.6em] items-center justify-center overflow-hidden'>
+          <div
+            className={`mt-8 rounded-xl border px-4 py-4 transition-colors duration-200 ${
+              headlineUpdated
+                ? 'border-emerald-200 bg-emerald-50/80'
+                : isPromptActionReady
+                  ? 'border-orange-200 bg-orange-50/85'
+                  : 'border-[#edd8c8] bg-[#fcefe3]'
+            }`}
+          >
+            <div className='mb-3 flex items-center justify-between'>
+              <span
+                className={`rounded-full px-2 py-1 text-[10px] font-medium uppercase tracking-[0.08em] ${
+                  headlineUpdated
+                    ? 'bg-emerald-100 text-emerald-700'
+                    : 'bg-white/85 text-neutral-500'
+                }`}
+              >
+                <span className='sm:hidden'>
+                  {headlineUpdated ? 'Updated' : 'Headline'}
+                </span>
+                <span className='hidden sm:inline'>
+                  {headlineUpdated ? 'Updated headline' : 'Editable headline'}
+                </span>
+              </span>
+              <span className='hidden text-[10px] font-medium uppercase tracking-[0.08em] text-neutral-400 sm:inline'>
+                Hero module
+              </span>
+            </div>
+
+            <div className='relative flex min-h-[1.8em] items-center justify-center overflow-hidden text-center'>
               <AnimatePresence
                 mode='wait'
                 initial={false}
@@ -99,18 +142,20 @@ const AgentEdit = () => {
               >
                 <motion.p
                   key={headline}
-                  className='font-serif font-medium sm:text-lg md:text-xl'
-                  initial={{ y: -14, opacity: 0, filter: 'blur(4px)' }}
-                  animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
-                  exit={{ y: 14, opacity: 0, filter: 'blur(4px)' }}
-                  transition={{ duration: 0.2, ease: 'easeInOut' }}
+                  className='font-serif text-lg font-medium sm:text-xl md:text-2xl'
+                  initial={shouldReduceMotion ? false : { y: -12, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 12, opacity: 0 }}
+                  transition={headlineSwapTransition}
                 >
                   {headline}
                 </motion.p>
               </AnimatePresence>
             </div>
-            <p className='text-xs font-medium sm:text-sm'>Limtied Time</p>
-            <button className='mt-4 bg-[#b2470b] font-medium px-2 py-1 text-xs text-white'>
+            <p className='mt-2 text-center text-xs font-medium tracking-[0.04em] text-neutral-600 sm:text-sm'>
+              Limited Time
+            </p>
+            <button className='mx-auto mt-4 block rounded-sm bg-[#b2470b] px-3 py-1.5 text-xs font-medium text-white shadow-[0_6px_16px_rgba(178,71,11,0.22)]'>
               Shop the sale
             </button>
           </div>
@@ -130,13 +175,34 @@ const AgentEdit = () => {
             : undefined
         }
         transition={agentEntranceTransition}
-        className='bg-white absolute bottom-44 left-4 rounded-lg shadow w-64 md:bottom-12'
+        className='absolute bottom-44 left-4 w-[calc(100%-2.5rem)] max-w-72 rounded-xl border border-slate-200/85 bg-white/95 shadow-[0_18px_50px_rgba(72,89,120,0.2)] backdrop-blur-[6px] md:bottom-12'
       >
-        <p className='font-semibold text-xs p-3 border-b border-neutral-300/20'>
-          Edit with agent
-        </p>
-        <div className='border border-neutral-300 text-xs text-neutral-500 p-2 m-3 rounded-md flex items-center gap-4 h-12'>
-          <div className='flex-1 self-start'>
+        <div className='flex items-center justify-between border-b border-slate-200/80 px-4 py-3'>
+          <div>
+            <p className='hidden text-[10px] font-medium uppercase tracking-[0.1em] text-sky-600 sm:block'>
+              Agent action
+            </p>
+            <p className='mt-1 text-xs font-semibold text-slate-900'>
+              Edit with agent
+            </p>
+          </div>
+          <span
+            className={`rounded-full px-2 py-1 text-[10px] font-medium ${
+              headlineUpdated
+                ? 'bg-emerald-100 text-emerald-700'
+                : isPromptReady
+                  ? 'bg-sky-100 text-sky-700'
+                  : 'bg-neutral-100 text-neutral-500'
+            }`}
+          >
+            {headlineUpdated ? 'Applied' : isPromptReady ? 'Ready' : 'Typing'}
+          </span>
+        </div>
+        <div className='m-3 rounded-lg border border-slate-200/90 bg-slate-50/85 p-3 text-xs text-slate-600'>
+          <p className='mb-2 hidden text-[10px] font-medium uppercase tracking-[0.08em] text-slate-400 sm:block'>
+            Prompt
+          </p>
+          <div className='min-h-10'>
             <Typewriter
               speed='fast'
               cursorStyle={cursor}
@@ -145,17 +211,25 @@ const AgentEdit = () => {
               Change the headline to "25% Off Sitewide"
             </Typewriter>
           </div>
+        </div>
+        <div className='flex items-center justify-end gap-3 px-3 pb-3 sm:justify-between'>
+          <p className='hidden text-[11px] leading-relaxed text-slate-500 sm:block'>
+            Update the hero headline without rewriting the rest of the email.
+          </p>
           <button
             type='button'
             onClick={handleApplyPrompt}
-            disabled={!isPromptReady || isApplyingPrompt || headlineUpdated}
+            disabled={!isPromptActionReady}
             aria-label='Apply prompt to email headline'
-            className={`mr-2 inline-flex items-center justify-center rounded-md p-1.5 transition-all duration-200 ease-out shadow-[0_0_0_1px_rgba(0,0,0,0.08)] ${
-              isPromptReady
-                ? 'translate-y-0 opacity-100 text-neutral-700  hover:scale-105 hover:text-black'
-                : 'pointer-events-none opacity-0 text-neutral-400'
-            } ${headline === '25% Off Sitewide' ? 'bg-neutral-100' : 'bg-white animate-pulse'}`}
+            className={`inline-flex items-center gap-1 rounded-md px-3 py-2 text-xs font-medium shadow-[0_0_0_1px_rgba(15,23,42,0.08)] transition-all duration-200 ease-out active:scale-[0.97] ${
+              isPromptActionReady
+                ? 'cursor-pointer bg-slate-900 text-white'
+                : isPromptReady || shouldReduceMotion
+                  ? 'pointer-events-none bg-neutral-100 text-neutral-400'
+                  : 'pointer-events-none translate-y-1 bg-neutral-100 text-neutral-400 opacity-0'
+            }`}
           >
+            Apply
             <svg
               xmlns='http://www.w3.org/2000/svg'
               width='24'
@@ -166,22 +240,13 @@ const AgentEdit = () => {
               strokeWidth='2'
               strokeLinecap='round'
               strokeLinejoin='round'
-              className='size-4 fill-current'
+              className='size-3.5'
             >
-              <path d='M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z' />
-              <path d='M6 12h16' />
+              <path d='M5 12h14' />
+              <path d='m12 5 7 7-7 7' />
             </svg>
           </button>
         </div>
-        <p
-          className={`px-3 pb-3 text-[11px] font-medium text-neutral-500 transition-all duration-200 ease-out ${
-            isPromptReady
-              ? 'translate-y-0 opacity-100'
-              : 'pointer-events-none -translate-y-1 opacity-0'
-          }`}
-        >
-          Click the arrow to apply the prompt.
-        </p>
       </motion.div>
     </article>
   );
