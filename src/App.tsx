@@ -4,7 +4,7 @@ import {
   useInView,
   useReducedMotion,
 } from 'motion/react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AgentEdit from './components/AgentEdit';
 
 const reviewPanelSpring = {
@@ -19,19 +19,149 @@ const reviewLayoutSpring = {
   damping: 32,
 };
 
+const REVIEW_ROW_ENTER_TRANSITION = {
+  type: 'spring' as const,
+  stiffness: 360,
+  damping: 30,
+};
+
+type ReviewState =
+  | 'processing-initial'
+  | 'issue'
+  | 'processing-fix'
+  | 'approved';
+
+type ReviewBadgeState = 'processing' | 'approved';
+
+type FollowUpReviewRow = {
+  id: 'brand-pre-review' | 'sam-brand' | 'maria-legal';
+  label: string;
+  icon: React.ReactNode;
+  badgeState: ReviewBadgeState;
+};
+
+const REVIEW_ROW_APPEARANCE = {
+  legalAgents: {
+    iconShell:
+      'bg-orange-200/30 ring-orange-300/40 text-neutral-700',
+  },
+  brandAgents: {
+    iconShell: 'bg-sky-200/35 ring-sky-300/45 text-sky-700',
+  },
+  sam: {
+    iconShell: 'bg-amber-200/40 ring-amber-300/50 text-amber-800',
+  },
+  maria: {
+    iconShell: 'bg-emerald-200/40 ring-emerald-300/50 text-emerald-800',
+  },
+} as const;
+
 function App() {
   const shouldReduceMotion = useReducedMotion();
   const reviewPanelRef = useRef<HTMLElement | null>(null);
-  const [hasCompletedReviewScan, setHasCompletedReviewScan] = useState(false);
+  const reviewTimerRefs = useRef<number[]>([]);
+  const [reviewState, setReviewState] =
+    useState<ReviewState>('processing-initial');
+  const [followUpStage, setFollowUpStage] = useState(0);
 
   const isReviewPanelInView = useInView(reviewPanelRef, {
     amount: 0.5,
     once: true,
   });
+  const activeReviewState =
+    shouldReduceMotion &&
+    isReviewPanelInView &&
+    reviewState === 'processing-initial'
+      ? 'issue'
+      : reviewState;
+  const reviewBadgeState =
+    activeReviewState === 'approved' ? 'approved' : 'processing';
   const isReviewProcessing =
-    isReviewPanelInView && !shouldReduceMotion && !hasCompletedReviewScan;
+    isReviewPanelInView &&
+    (activeReviewState === 'processing-initial' ||
+      activeReviewState === 'processing-fix');
   const showMissingEndDate =
-    (isReviewPanelInView && shouldReduceMotion) || hasCompletedReviewScan;
+    isReviewPanelInView && activeReviewState === 'issue';
+  const followUpRows: FollowUpReviewRow[] = [
+    {
+      id: 'brand-pre-review',
+      label: 'Brand pre-review agents',
+      icon: '🤖',
+      badgeState: followUpStage >= 2 ? 'approved' : 'processing',
+    },
+    {
+      id: 'sam-brand',
+      label: 'Sam (Brand)',
+      icon: 'SR',
+      badgeState: followUpStage >= 5 ? 'approved' : 'processing',
+    },
+    {
+      id: 'maria-legal',
+      label: 'Maria (Legal)',
+      icon: 'MG',
+      badgeState: followUpStage >= 6 ? 'approved' : 'processing',
+    },
+  ];
+  const visibleFollowUpRows = followUpRows.filter((row) => {
+    if (row.id === 'brand-pre-review') {
+      return followUpStage >= 1;
+    }
+
+    if (row.id === 'sam-brand') {
+      return followUpStage >= 3;
+    }
+
+    return followUpStage >= 4;
+  });
+
+  const clearReviewTimers = () => {
+    reviewTimerRefs.current.forEach((timerId) => window.clearTimeout(timerId));
+    reviewTimerRefs.current = [];
+  };
+
+  useEffect(() => {
+    return () => {
+      clearReviewTimers();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (activeReviewState !== 'approved' || followUpStage > 0) {
+      return;
+    }
+
+    const timing = shouldReduceMotion
+      ? [120, 360, 460, 540, 760, 860]
+      : [200, 620, 760, 860, 1120, 1240];
+
+    reviewTimerRefs.current = timing.map((delay, index) =>
+      window.setTimeout(() => {
+        setFollowUpStage(index + 1);
+      }, delay),
+    );
+
+    return () => {
+      clearReviewTimers();
+    };
+  }, [activeReviewState, shouldReduceMotion]);
+
+  const handleFixIssue = () => {
+    clearReviewTimers();
+    setFollowUpStage(0);
+
+    setReviewState('processing-fix');
+
+    if (shouldReduceMotion) {
+      const timerId = window.setTimeout(() => {
+        setReviewState('approved');
+        reviewTimerRefs.current = reviewTimerRefs.current.filter(
+          (existingTimerId) => existingTimerId !== timerId,
+        );
+      }, 900);
+
+      reviewTimerRefs.current = [timerId];
+    }
+  };
 
   return (
     <div className='page-shell px-2 py-12 space-y-24'>
@@ -97,35 +227,55 @@ function App() {
               Review
             </p>
             <motion.div layout className='p-6'>
-              <div className='flex items-center gap-2 text-xs'>
-                <span className='inline-flex size-6 items-center justify-center bg-orange-200/30 rounded-full ring ring-orange-300/40'>
-                  🤖
-                </span>
-                <span className='font-medium'>Legal pre-review agents</span>
-                <span className='inline-flex items-center gap-0.5 bg-neutral-100 ring ring-neutral-200 px-1.5 py-0.5 rounded-full'>
-                  <motion.span
-                    aria-hidden='true'
-                    className='size-3 rounded-full border border-neutral-300 border-t-neutral-500'
-                    animate={
-                      isReviewProcessing ? { rotate: 360 } : { rotate: 0 }
-                    }
-                    transition={
-                      isReviewProcessing
-                        ? {
-                            duration: 1,
-                            ease: 'linear',
-                            repeat: 1,
-                          }
-                        : { duration: 0.2, ease: 'easeOut' }
-                    }
-                    onAnimationComplete={() => {
-                      if (isReviewProcessing) {
-                        setHasCompletedReviewScan(true);
+              <div className='space-y-3'>
+                <ReviewStatusRow
+                  icon='🤖'
+                  iconShellClassName={REVIEW_ROW_APPEARANCE.legalAgents.iconShell}
+                  label='Legal pre-review agents'
+                  badgeState={reviewBadgeState}
+                  isProcessing={isReviewProcessing}
+                  onProcessingComplete={() => {
+                    if (!shouldReduceMotion && isReviewPanelInView) {
+                      if (activeReviewState === 'processing-initial') {
+                        setReviewState('issue');
                       }
-                    }}
-                  />
-                  Processing
-                </span>
+
+                      if (activeReviewState === 'processing-fix') {
+                        setReviewState('approved');
+                      }
+                    }
+                  }}
+                />
+                <AnimatePresence initial={false}>
+                  {visibleFollowUpRows.map((row) => (
+                    <motion.div
+                      key={row.id}
+                      layout
+                      initial={
+                        shouldReduceMotion
+                          ? false
+                          : { opacity: 0, y: 8, scale: 0.985 }
+                      }
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -6, scale: 0.985 }}
+                      transition={REVIEW_ROW_ENTER_TRANSITION}
+                    >
+                      <ReviewStatusRow
+                        icon={row.icon}
+                        iconShellClassName={
+                          row.id === 'brand-pre-review'
+                            ? REVIEW_ROW_APPEARANCE.brandAgents.iconShell
+                            : row.id === 'sam-brand'
+                              ? REVIEW_ROW_APPEARANCE.sam.iconShell
+                              : REVIEW_ROW_APPEARANCE.maria.iconShell
+                        }
+                        label={row.label}
+                        badgeState={row.badgeState}
+                        isProcessing={row.badgeState === 'processing'}
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </div>
               <AnimatePresence initial={false}>
                 {showMissingEndDate ? (
@@ -176,7 +326,11 @@ function App() {
                       </p>
 
                       <div className='flex items-center gap-2'>
-                        <button className='cursor-pointer bg-white ring ring-neutral-200/50 px-2 py-1 rounded-sm'>
+                        <button
+                          type='button'
+                          onClick={handleFixIssue}
+                          className='cursor-pointer bg-white ring ring-neutral-200/50 px-2 py-1 rounded-sm'
+                        >
                           Fix
                         </button>
                         <button disabled>Ignore</button>
@@ -194,3 +348,169 @@ function App() {
 }
 
 export default App;
+
+function ReviewStatusRow({
+  icon,
+  iconShellClassName,
+  label,
+  badgeState,
+  isProcessing,
+  onProcessingComplete,
+}: {
+  icon: React.ReactNode;
+  iconShellClassName: string;
+  label: string;
+  badgeState: ReviewBadgeState;
+  isProcessing: boolean;
+  onProcessingComplete?: () => void;
+}) {
+  return (
+    <div className='flex items-center gap-2 text-xs'>
+      <span
+        className={`inline-flex size-6 items-center justify-center rounded-full ring ${iconShellClassName}`}
+      >
+        {typeof icon === 'string' && icon.length <= 2 ? (
+          <span className='text-[10px] font-semibold tracking-[0.02em]'>
+            {icon}
+          </span>
+        ) : (
+          icon
+        )}
+      </span>
+      <span className='font-medium'>{label}</span>
+      <ReviewBadge
+        badgeState={badgeState}
+        isProcessing={isProcessing}
+        onProcessingComplete={onProcessingComplete}
+      />
+    </div>
+  );
+}
+
+function ReviewBadge({
+  badgeState,
+  isProcessing,
+  onProcessingComplete,
+}: {
+  badgeState: ReviewBadgeState;
+  isProcessing: boolean;
+  onProcessingComplete?: () => void;
+}) {
+  return (
+    <motion.span
+      layout
+      className={`inline-flex items-center overflow-hidden rounded-full px-1.5 py-0.5 ring ${
+        badgeState === 'approved'
+          ? 'bg-green-50 text-green-700 ring-green-200'
+          : 'bg-neutral-100 text-neutral-600 ring-neutral-200'
+      }`}
+      transition={{ layout: reviewLayoutSpring }}
+    >
+      <motion.span
+        layout
+        transition={{ layout: reviewLayoutSpring }}
+        className='inline-flex items-center gap-1'
+      >
+        <motion.span
+          animate={{ width: 12 }}
+          transition={reviewLayoutSpring}
+          className='relative inline-flex h-3 items-center justify-center overflow-hidden'
+        >
+          <AnimatePresence initial={false} mode='popLayout'>
+            <motion.span
+              key={badgeState}
+              initial={{
+                y: -10,
+                opacity: 0,
+                scale: 0.75,
+                filter: 'blur(4px)',
+              }}
+              animate={{
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                filter: 'blur(0px)',
+              }}
+              exit={{
+                y: 10,
+                opacity: 0,
+                scale: 0.75,
+                filter: 'blur(4px)',
+              }}
+              transition={{ duration: 0.18, ease: 'easeInOut' }}
+              className='absolute inset-0 flex items-center justify-center'
+            >
+              {badgeState === 'approved' ? (
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  width='24'
+                  height='24'
+                  viewBox='0 0 24 24'
+                  fill='none'
+                  stroke='currentColor'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  className='size-3'
+                >
+                  <circle cx='12' cy='12' r='10' />
+                  <path d='m9 12 2 2 4-4' />
+                </svg>
+              ) : (
+                <motion.span
+                  aria-hidden='true'
+                  className='size-3 rounded-full border border-neutral-300 border-t-neutral-500'
+                  animate={isProcessing ? { rotate: 360 } : { rotate: 0 }}
+                  transition={
+                    isProcessing
+                      ? {
+                          duration: 0.7,
+                          ease: 'linear',
+                          repeat: 1,
+                        }
+                      : { duration: 0.2, ease: 'easeOut' }
+                  }
+                  onAnimationComplete={() => {
+                    if (isProcessing) {
+                      onProcessingComplete?.();
+                    }
+                  }}
+                />
+              )}
+            </motion.span>
+          </AnimatePresence>
+        </motion.span>
+        <motion.span
+          layout
+          className='relative inline-flex overflow-hidden text-[11px] font-medium'
+          transition={{ layout: reviewLayoutSpring }}
+        >
+          <AnimatePresence initial={false} mode='popLayout'>
+            <motion.span
+              key={badgeState}
+              initial={{
+                y: -10,
+                opacity: 0,
+                filter: 'blur(4px)',
+              }}
+              animate={{
+                y: 0,
+                opacity: 1,
+                filter: 'blur(0px)',
+              }}
+              exit={{
+                y: 10,
+                opacity: 0,
+                filter: 'blur(4px)',
+              }}
+              transition={{ duration: 0.18, ease: 'easeInOut' }}
+              className='relative whitespace-nowrap'
+            >
+              {badgeState === 'approved' ? 'Approved' : 'Processing'}
+            </motion.span>
+          </AnimatePresence>
+        </motion.span>
+      </motion.span>
+    </motion.span>
+  );
+}
