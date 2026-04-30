@@ -4,6 +4,18 @@ import ReviewPanel from './components/ReviewPanel';
 function App() {
   return (
     <div className='page-shell px-2 py-12 space-y-24'>
+      <p className='mb-8 leading-5 text-center text-xs font-medium text-neutral-700 sm:text-xs'>
+        An{' '}
+        <a
+          href='https://www.linkedin.com/in/internetdrew/'
+          target='_blank'
+          rel='noreferrer'
+          className='underline decoration-neutral-400 underline-offset-3 transition-colors transition-decoration-color duration-150 ease-out hover:decoration-neutral-700'
+        >
+          InternetDrew
+        </a>{' '}
+        interactive experience
+      </p>
       <div className='mx-auto text-center mt-20 mb-28'>
         <h1 className='text-2xl font-semibold mx-auto sm:max-w-1/2 md:text-3xl'>
           Directed by marketers, <br />
