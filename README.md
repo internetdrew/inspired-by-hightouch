@@ -13,15 +13,25 @@ This project takes those moments as a starting point and reimagines them as ligh
 
 ## Run Locally
 
-1. Clone the repo and install dependencies.
+1. Clone the repo:
 
 ```bash
 git clone https://github.com/internetdrew/inspired-by-hightouch.git
+```
+
+2. Got into the directory:
+
+```bash
 cd inspired-by-hightouch
+```
+
+3. Install dependencies:
+
+```bash
 npm install
 ```
 
-2. Start the dev server.
+4. Start the dev server:
 
 ```bash
 npm run dev
@@ -31,7 +41,7 @@ npm run dev
 
 ### Project Framing
 
-- Treat Hightouch as inspiration for product storytelling, not as a target for critique.
+- Use Hightouch as inspiration for product storytelling.
 - Use the site and video language as a starting point for experimentation in interaction design.
 - Focus on bringing product confidence and clarity to life through stateful UI, not just visual imitation.
 - Build scenes that work as interactive experiences, not only as motion compositions.
