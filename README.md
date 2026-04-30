@@ -13,10 +13,19 @@ This project takes those moments as a starting point and reimagines them as ligh
 
 ## Run Locally
 
-- `git clone https://github.com/internetdrew/inspired-by-hightouch.git`
-- `cd inspired-by-hightouch`
-- `npm install`
-- `npm run dev`
+1. Clone the repo and install dependencies.
+
+```bash
+git clone https://github.com/internetdrew/inspired-by-hightouch.git
+cd inspired-by-hightouch
+npm install
+```
+
+2. Start the dev server.
+
+```bash
+npm run dev
+```
 
 ## Reimagining The Moments
 
