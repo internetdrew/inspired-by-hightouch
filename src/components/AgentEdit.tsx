@@ -72,7 +72,7 @@ const AgentEdit = () => {
             : undefined
         }
         transition={emailEntranceTransition}
-        className='relative w-4/6 space-y-2 rounded-md bg-white p-4 shadow-[0_18px_45px_rgba(80,98,132,0.14)]'
+        className='relative w-5/6 space-y-2 rounded-md bg-white p-4 shadow-[0_18px_45px_rgba(80,98,132,0.14)] lg:w-4/6'
       >
         <div className='flex items-center justify-between border-b border-neutral-200/70 pb-3'>
           <div className='flex items-start gap-8 text-xs md:text-sm'>
