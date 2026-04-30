@@ -1,96 +1,46 @@
-# React + TypeScript + Vite
+# Interactivity Inspired by Hightouch's Content Assembly
 
-## Design Notes
+This project is a personal interactive experiment inspired by Hightouch's product storytelling and website presentation.
 
-### AgentEdit Critique
+My goal here is to study how a strong product website can communicate confidence and clarity, then translate that feeling into small interactive experiences that make the product story feel more alive for visitors.
 
-The `AgentEdit` demo in `src/components/AgentEdit.tsx` should communicate one clear story: an agent targets a specific editable region and applies a precise change to a credible marketing asset.
+This project takes those moments as a starting point and reimagines them as lightweight product interactions. Each component tries to preserve the polish and emotional clarity of the original inspiration while answering a harder question: what would this moment feel like if it were a believable interface someone could actually use?
 
-- Make the agent card the control surface and the email the canvas, not two equal focal points.
-- Let hierarchy carry attention; avoid pulse-based emphasis for the primary action.
-- Keep motion crisp and product-like by preferring transform and opacity over blur-heavy transitions.
-- Make the editable region visibly distinct before and after the change so the payoff is immediate.
-- Remove instructional redundancy when the layout itself can explain what happens next.
-- Treat copy quality as part of trust; even small mistakes in the mock weaken the demo.
+## What's Here
 
-### ReviewPanel Critique
+- `AgentEdit`: reimagines an AI-guided content edit as a direct before-and-after interaction.
+- `ReviewPanel`: reimagines a review interruption as a resolvable workflow step.
 
-The `ReviewPanel` demo in `src/components/ReviewPanel.tsx` began as a passive moment from the source video: legal review pauses on a visible `Missing end date` issue. In the implementation, that moment had to become interactive without losing its role as the focal interruption in the review flow.
+## Run Locally
 
-- Preserve the issue state as the clear stop in the sequence, not just another row in the panel.
-- Translate the video frame into a usable decision point with an obvious primary action.
-- Make the issue card explain what is wrong, why it matters, and what resolves it.
-- Ensure the post-fix sequence feels believable by advancing cleanly into the rest of the approvals.
-- Use hierarchy and state progression to carry the interaction, rather than relying on decorative emphasis.
+- `npm install`
+- `npm run dev`
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Reimagining The Moments
 
-Currently, two official plugins are available:
+### Project Framing
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Treat Hightouch as inspiration for product storytelling, not as a target for critique.
+- Use the site and video language as a starting point for experimentation in interaction design.
+- Focus on bringing product confidence and clarity to life through stateful UI, not just visual imitation.
+- Build scenes that work as interactive experiences, not only as motion compositions.
 
-## React Compiler
+### AgentEdit Reimagining
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The `AgentEdit` demo in `src/components/AgentEdit.tsx` started as inspiration from a polished product-storytelling moment. Reimagining it as an interactive experience meant making the edit path more obvious, making the editable target feel intentional, and making the outcome communicate product value immediately.
 
-## Expanding the ESLint configuration
+- Reframe the scene so the agent card acts as the control surface and the email acts as the canvas.
+- Make the editable region feel clearly targeted before the change happens.
+- Ensure the before-and-after result communicates value at a glance.
+- Use hierarchy and restrained motion to make the action path obvious without overexplaining it.
+- Tighten the mock content so the experience feels credible, not just visually inspired.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### ReviewPanel Reimagining
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+The `ReviewPanel` demo in `src/components/ReviewPanel.tsx` began as a passive review interruption in the source video. Reimagining it as an interactive experience meant preserving the clarity of that interruption while turning it into a usable decision point with a believable downstream effect on the review flow.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+- Preserve the issue as the clear focal stop in the sequence, not just another visual state.
+- Translate the original frame into an actionable moment with an obvious resolution path.
+- Make the interruption explain what is wrong, why it matters, and what the user should do next.
+- Advance the post-fix sequence in a way that makes the product logic feel believable.
+- Let hierarchy and state progression communicate value more clearly than decoration alone.
