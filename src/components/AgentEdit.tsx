@@ -13,7 +13,7 @@ const AgentEdit = () => {
   const shouldReduceMotion = useReducedMotion();
   const editPanelRef = useRef<HTMLElement | null>(null);
   const isEditPanelInView = useInView(editPanelRef, {
-    amount: 0.5,
+    amount: 0.8,
     once: true,
   });
 
