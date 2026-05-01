@@ -3,7 +3,7 @@ import ReviewPanel from './components/ReviewPanel';
 
 function App() {
   return (
-    <div className='page-shell px-2 py-12 space-y-24'>
+    <div className='page-shell px-2 py-12 space-y-24 overflow-y-scroll'>
       <p className='mb-8 leading-5 text-center text-xs font-medium text-neutral-700 sm:text-xs'>
         An{' '}
         <a
