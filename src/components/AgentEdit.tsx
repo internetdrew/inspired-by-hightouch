@@ -23,8 +23,10 @@ const AgentEdit = () => {
   >('25% Off Everything');
   const [isApplyingPrompt, setIsApplyingPrompt] = useState(false);
   const [headlineUpdated, setHeadlineUpdated] = useState(false);
+  const [isAgentPanelSettled, setIsAgentPanelSettled] = useState(false);
   const isPromptActionReady =
     isPromptReady && !isApplyingPrompt && !headlineUpdated;
+  const shouldStartPrompt = shouldReduceMotion || isAgentPanelSettled;
 
   const emailEntranceTransition = {
     type: 'spring' as const,
@@ -181,6 +183,7 @@ const AgentEdit = () => {
             : undefined
         }
         transition={agentEntranceTransition}
+        onAnimationComplete={() => setIsAgentPanelSettled(true)}
         className='absolute bottom-44 left-4 w-[calc(100%-2.5rem)] max-w-72 rounded-xl border border-slate-200/85 bg-white/95 shadow-[0_18px_50px_rgba(72,89,120,0.2)] backdrop-blur-[6px] md:bottom-12'
       >
         <div className='flex items-center justify-between border-b border-slate-200/80 px-4 py-3'>
@@ -240,13 +243,15 @@ const AgentEdit = () => {
             Prompt
           </p>
           <div className='min-h-10'>
-            <Typewriter
-              speed='fast'
-              cursorStyle={cursor}
-              onComplete={() => setIsPromptReady(true)}
-            >
-              Change the headline to "25% Off Sitewide"
-            </Typewriter>
+            {shouldStartPrompt ? (
+              <Typewriter
+                speed='fast'
+                cursorStyle={cursor}
+                onComplete={() => setIsPromptReady(true)}
+              >
+                Change the headline to "25% Off Sitewide"
+              </Typewriter>
+            ) : null}
           </div>
         </div>
         <div className='flex items-center justify-end gap-3 px-3 pb-3 sm:justify-between'>
