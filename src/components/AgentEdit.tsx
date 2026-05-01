@@ -5,13 +5,17 @@ import {
   useReducedMotion,
 } from 'motion/react';
 import { Typewriter } from 'motion-plus/react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const EASE_OUT = [0.23, 1, 0.32, 1] as const;
+const HEADLINE_APPLY_DELAY = 620;
+const HEADLINE_SHIMMER_GRADIENT =
+  'linear-gradient(90deg, #171717 0%, #171717 28%, #b2470b 48%, #f59e0b 52%, #171717 72%, #171717 100%)';
 
 const AgentEdit = () => {
   const shouldReduceMotion = useReducedMotion();
   const editPanelRef = useRef<HTMLElement | null>(null);
+  const applyTimerRef = useRef<number | null>(null);
   const isEditPanelInView = useInView(editPanelRef, {
     amount: 0.8,
     once: true,
@@ -51,6 +55,16 @@ const AgentEdit = () => {
     : isPromptReady
       ? 'ready'
       : 'typing';
+  const isHeadlineShimmering =
+    isApplyingPrompt && !headlineUpdated && !shouldReduceMotion;
+
+  useEffect(() => {
+    return () => {
+      if (applyTimerRef.current !== null) {
+        window.clearTimeout(applyTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleApplyPrompt = () => {
     if (isApplyingPrompt || headline === '25% Off Sitewide') {
@@ -58,8 +72,18 @@ const AgentEdit = () => {
     }
 
     setIsApplyingPrompt(true);
-    setHeadline('25% Off Sitewide');
-    setHeadlineUpdated(true);
+
+    if (shouldReduceMotion) {
+      setHeadline('25% Off Sitewide');
+      setHeadlineUpdated(true);
+      return;
+    }
+
+    applyTimerRef.current = window.setTimeout(() => {
+      setHeadline('25% Off Sitewide');
+      setHeadlineUpdated(true);
+      applyTimerRef.current = null;
+    }, HEADLINE_APPLY_DELAY);
   };
 
   return (
@@ -152,9 +176,39 @@ const AgentEdit = () => {
                   key={headline}
                   className='font-serif text-lg font-medium sm:text-xl md:text-2xl'
                   initial={shouldReduceMotion ? false : { y: -12, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
+                  animate={
+                    isHeadlineShimmering
+                      ? {
+                          y: 0,
+                          opacity: 1,
+                          backgroundPosition: ['160% 0', '-60% 0'],
+                        }
+                      : { y: 0, opacity: 1, backgroundPosition: '160% 0' }
+                  }
                   exit={{ y: 12, opacity: 0 }}
-                  transition={headlineSwapTransition}
+                  transition={
+                    isHeadlineShimmering
+                      ? {
+                          backgroundPosition: {
+                            duration: HEADLINE_APPLY_DELAY / 1000,
+                            ease: 'easeInOut',
+                          },
+                          y: headlineSwapTransition,
+                          opacity: headlineSwapTransition,
+                        }
+                      : headlineSwapTransition
+                  }
+                  style={
+                    isHeadlineShimmering
+                      ? {
+                          backgroundImage: HEADLINE_SHIMMER_GRADIENT,
+                          backgroundSize: '220% 100%',
+                          WebkitBackgroundClip: 'text',
+                          backgroundClip: 'text',
+                          color: 'transparent',
+                        }
+                      : undefined
+                  }
                 >
                   {headline}
                 </motion.p>
